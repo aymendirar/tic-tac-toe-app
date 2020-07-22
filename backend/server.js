@@ -8,7 +8,7 @@ require("dotenv").config();
 const server = express();
 const port = process.env.PORT || 5000;
 
-// the server will make use of cors ane express json
+// the server will make use of cors and express.json
 server.use(cors()); // allows interaction between frontend and backend
 server.use(express.json()); // recognizes incoming requests as JSON objects
 
@@ -26,13 +26,12 @@ connection.once("open", () => {
     console.log("MongoDB Atlas database connection established successfully");
 });
 
-// tells server to use the
-
+// tells server to use the following routes
 const usersRouter = require("./routes/users");
-const gameRouter = require("./routes/game");
+const gamesRouter = require("./routes/games");
 
 server.use("/users", usersRouter); // at the "/users" route, use the users API in usersRouter
-// server.use("/game", gameRouter);
+server.use("/games", gamesRouter); // at the "/games" route, use the games API in gamesRouter
 
 // creates a server that listens at the given port
 server.listen(port, () => {

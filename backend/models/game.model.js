@@ -4,9 +4,11 @@ const Schema = mongoose.Schema;
 
 const gameSchema = new Schema(
     {
-        boardArray: { type: Array, required: true },
-        playerOne: { type: String, required: true },
-        playerTwo: { type: String, required: false },
+        boardArray: { type: Array, required: true }, // array 9 long of X, O, or null
+        playerOne: { type: String, required: true }, // id of player one
+        playerTwo: { type: String, required: false }, // id of player two
+        completed: { type: Boolean, default: false }, // keeps track if game ended
+        xIsNext: { type: Boolean, default: true }, // X is always the first player
     },
     {
         timestamps: true,
