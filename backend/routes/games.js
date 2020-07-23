@@ -1,5 +1,6 @@
 // imports and necessary tool
 const router = require("express").Router(); // express router tools
+const axios = require("axios"); // promise based http client for node.js and browser
 let Game = require("../models/game.model"); // the mongoDB game model
 let User = require("../models/user.model"); // the mongoDB user mode
 const { response } = require("express");
@@ -107,6 +108,36 @@ router.route("/update/:userid").patch((req, res) => {
 
             // check if there's a winner and update game document accordingly
             if (winner) {
+                // update the user's win/loss record by making a request to the user api
+                const id = req.params.userid; // extracted id from url
+                if (winner == "X") {
+                    // "X" is the player that started the game
+                    // make patch request to update-record endpoint with appropriate request body
+                    axios
+                        .patch(
+                            "http://localhost:5000/users/update-record/" + id,
+                            {
+                                win: true,
+                            }
+                        )
+                        .then((res) => {
+                            console.log("User win record updated");
+                        })
+                        .catch((err) => console.log("Error: " + err));
+                } else if (winner == "O") {
+                    // "O" is the second player. If they win, "X", the player that started, loses
+                    axios
+                        .patch(
+                            "http://localhost:5000/users/update-record" + id,
+                            {
+                                win: false,
+                            }
+                        )
+                        .then((res) => {
+                            console.log("User loss record updated");
+                        })
+                        .catch((err) => console.log("Error: " + err));
+                }
                 game.completed = true;
                 response = "Game has ended. Winner is " + winner;
             } else if (zeroSum) {
