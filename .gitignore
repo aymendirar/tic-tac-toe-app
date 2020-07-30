@@ -1,2 +1,6 @@
 node_modules/
 backend/.env
+
+# from CRA .gitignore
+/frontend/.pnp
+/frontend/.pnp.js

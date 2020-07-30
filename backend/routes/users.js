@@ -29,6 +29,24 @@ router.route("/add").post((req, res) => {
         .catch((err) => res.status(400).json("Error: " + err));
 });
 
+// checks if user credentials in request match that of those in database
+router.route("/check").post((req, res) => {
+    // extract info from request
+    const username = req.body.username;
+    const password = req.body.password;
+    User.findOne({
+        // find user in DB that matches document
+        username: username,
+        password: password,
+    }) //! not finding user
+        .then((user) =>
+            res.json(
+                user // res.data will be null if not found, will contain object if found
+            )
+        )
+        .catch((err) => res.status(400).json("Error yikers " + err));
+});
+
 // gets specific user details
 router.route("/:id").get((req, res) => {
     User.findById(req.params.id)

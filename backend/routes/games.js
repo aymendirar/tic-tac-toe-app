@@ -2,8 +2,6 @@
 const router = require("express").Router(); // express router tools
 const axios = require("axios"); // promise based http client for node.js and browser
 let Game = require("../models/game.model"); // the mongoDB game model
-let User = require("../models/user.model"); // the mongoDB user mode
-const { response } = require("express");
 
 //TODO: finish game API endpoints
 
