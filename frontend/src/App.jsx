@@ -27,7 +27,6 @@ export default class App extends Component {
 
     // changes the isLoggedIn to fale
     handleLogoutClick() {
-        console.log("shit");
         this.setState({ isLoggedIn: false });
     }
 
@@ -39,9 +38,9 @@ export default class App extends Component {
             return (
                 <Router>
                     <NavbarLoggedIn logoutFunction={this.handleLogoutClick} />
-                    <Route path="/" exact component={Dashboard} />
-                    <Route path="/game" component={Game} />
-                    <Route path="/edit/:id" component={EditUserDetails} />
+                    <Route exact path={["/", "/login"]} component={Dashboard} />
+                    <Route exact path="/game" component={Game} />
+                    <Route exact path="/edit/:id" component={EditUserDetails} />
                 </Router>
             );
         } else {
@@ -59,8 +58,8 @@ export default class App extends Component {
                             />
                         )}
                     />
-                    <Route path="/game" component={Error404} />
-                    <Route path="/edit/:id" component={Error404} />
+                    <Route exact path="/game" component={Error404} />
+                    <Route exact path="/edit/:id" component={Error404} />
                 </Router>
             );
         }
