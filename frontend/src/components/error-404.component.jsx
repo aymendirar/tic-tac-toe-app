@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import Error404Monkey from "../404-monkey.gif";
+import Error404Monkey from "../images/404-monkey.gif";
 
 export default class Error404 extends Component {
     render() {

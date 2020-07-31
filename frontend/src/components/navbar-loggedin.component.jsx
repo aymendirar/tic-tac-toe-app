@@ -20,7 +20,7 @@ export default class NavbarLoggedIn extends Component {
                 </div>
                 <div className="flex items-center flex-shrink-0 text-white mr-6">
                     <Link
-                        to="/edit/:id"
+                        to={"/edit/" + this.props.id}
                         className="font-bold text-xl transition duration-200 ease-in-out hover:text-yellow-500"
                     >
                         User Details

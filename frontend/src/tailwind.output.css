@@ -17863,6 +17863,10 @@ video {
   transition-delay: 1000ms;
 }
 
+.card {
+  height: 400px;
+}
+
 @media (min-width: 640px) {
   .sm\:container {
     width: 100%;

@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 
-export default class EditUserDetails extends Component {
+export default class UserDetails extends Component {
     render() {
         return (
             <div>
-                <p>stub for EditUserDetails</p>
+                <p>stub for UserDetails</p>
             </div>
         );
     }

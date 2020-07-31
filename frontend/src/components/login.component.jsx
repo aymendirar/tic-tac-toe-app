@@ -44,7 +44,7 @@ export default class Login extends Component {
                         res.data.username +
                             "'s credentials are valid and in the database"
                     );
-                    this.login();
+                    this.login(res.data._id); // sends the id of the user to app
                 } else {
                     this.clearState();
                     this.setTryAgainTrue();
@@ -52,7 +52,7 @@ export default class Login extends Component {
                 }
             })
             .catch((err) => {
-                console.log(err.response.data);
+                console.log(err.response);
                 this.clearState();
             });
         console.log("finished");
