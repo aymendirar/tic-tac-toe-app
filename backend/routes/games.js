@@ -3,8 +3,6 @@ const router = require("express").Router(); // express router tools
 const axios = require("axios"); // promise based http client for node.js and browser
 let Game = require("../models/game.model"); // the mongoDB game model
 
-//TODO: finish game API endpoints
-
 /* 
 ************************************************************
                     GAME LOGIC
@@ -63,7 +61,7 @@ router.route("/").get((req, res) => {
 // create a new game with the user who started
 router.route("/start/:userid").post((req, res) => {
     // empty board is represented by array 9 long with null values
-    const boardArray = Array(9).fill(null); //? not keeping track of history -- maybe add later
+    const boardArray = Array(9).fill(null);
     const playerOne = req.params.userid; //! assuming that the player id exists and is valid
 
     // make a new game document
@@ -75,82 +73,92 @@ router.route("/start/:userid").post((req, res) => {
     // saves the new game document into the database
     newGame
         .save()
-        .then(() =>
-            res.json("Game by " + playerOne + " has started successfully")
-        )
+        .then(() => res.json(newGame._id)) // returns the id of the created game
         .catch((err) => res.status(400).json("Error: " + err));
 });
 
 // update game board and check if someone won
-router.route("/update/:userid").patch((req, res) => {
-    // find the specific game that the user is playing
+router.route("/update/:gameid").patch((req, res) => {
+    // find the specific game associated with the gameid
     //! think about handling updates when the game is full/ when the spot is taken
     Game.findOne({
-        playerOne: req.params.userid,
+        _id: req.params.gameid,
     })
         .then((game) => {
-            // extract out the request body values
-            const index = Number(req.body.index);
-            const playerLetter = game.xIsNext ? "X" : "O";
+            if (!game.completed) {
+                // extract out the request body values
+                const index = Number(req.body.index);
+                const playerLetter = game.xIsNext ? "X" : "O";
+                const playerID = game.playerOne;
 
-            // updates the game board
-            board = game.boardArray.slice();
-            board[index] = playerLetter;
-            game.boardArray = board;
-            game.xIsNext = !game.xIsNext;
+                let nextPlayer = playerLetter;
 
-            // set up variables to check if winner, zero sum game, or game should continue
-            const winner = calculateWinner(game.boardArray);
-            const zeroSum = noWinner(game.boardArray);
-            let response = ""; // response will change depending on outcome
-
-            // check if there's a winner and update game document accordingly
-            if (winner) {
-                // update the user's win/loss record by making a request to the user api
-                const id = req.params.userid; // extracted id from url
-                if (winner == "X") {
-                    // "X" is the player that started the game
-                    // make patch request to update-record endpoint with appropriate request body
-                    axios
-                        .patch(
-                            "http://localhost:5000/users/update-record/" + id,
-                            {
-                                win: true,
-                            }
-                        )
-                        .then((res) => {
-                            console.log("User win record updated");
-                        })
-                        .catch((err) => console.log("Error: " + err));
-                } else if (winner == "O") {
-                    // "O" is the second player. If they win, "X", the player that started, loses
-                    axios
-                        .patch(
-                            "http://localhost:5000/users/update-record" + id,
-                            {
-                                win: false,
-                            }
-                        )
-                        .then((res) => {
-                            console.log("User loss record updated");
-                        })
-                        .catch((err) => console.log("Error: " + err));
+                // updates the game board
+                let board = game.boardArray.slice();
+                if (board[index] == null) {
+                    // should only update if the index is currently null
+                    board[index] = playerLetter;
+                    game.boardArray = board;
+                    nextPlayer = game.xIsNext ? "O" : "X"; // nextPlayer changed if valid move is made
+                    game.xIsNext = !game.xIsNext;
                 }
-                game.completed = true;
-                response = "Game has ended. Winner is " + winner;
-            } else if (zeroSum) {
-                game.completed = true;
-                response = "No possible winner. Game has ended";
-            } else {
-                response = "Board updated successfully" + board;
-            }
+                // set up variables to check if winner, zero sum game, or game should continue
+                const winner = calculateWinner(game.boardArray);
+                const zeroSum = noWinner(game.boardArray);
+                let response = ""; // response will change depending on outcome
 
-            // save the game document
-            game.save()
-                .then(() => {
-                    res.json(response);
-                })
-                .catch((err) => res.status(400).json("Error: " + err));
+                // check if there's a winner and update game document accordingly
+                if (winner) {
+                    // update the user's win/loss record by making a request to the user api
+                    if (winner == "X") {
+                        // "X" is the player that started the game
+                        // make patch request to update-record endpoint with appropriate request body
+                        axios
+                            .patch(
+                                "http://localhost:5000/users/update-record/" +
+                                    playerID,
+                                {
+                                    win: true,
+                                }
+                            )
+                            .then((res) => {
+                                console.log(res.data);
+                            })
+                            .catch((err) => console.log("Error: " + err));
+                    } else if (winner == "O") {
+                        // "O" is the second player. If they win, "X", the player that started, loses
+                        axios
+                            .patch(
+                                "http://localhost:5000/users/update-record/" +
+                                    playerID,
+                                {
+                                    win: false,
+                                }
+                            )
+                            .then((res) => {
+                                console.log(res.data);
+                            })
+                            .catch((err) => console.log("Error: " + err));
+                    }
+                    game.completed = true;
+                    response = "Game has ended. Winner is " + winner;
+                } else if (zeroSum) {
+                    game.completed = true;
+                    response = "No possible winner. Game has ended";
+                } else {
+                    response = "It's your turn, player " + nextPlayer;
+                }
+
+                // save the game document regardless of whether an update occurs or if the game ends or not
+                game.save()
+                    .then(() => {
+                        res.json({
+                            status: response,
+                            squares: board,
+                        });
+                    })
+                    .catch((err) => res.status(400).json("Error: " + err));
+            }
         })
         .catch((err) => res.status(400).json("Error: " + err));
 });

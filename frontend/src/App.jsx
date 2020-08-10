@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Redirect } from "react-router-dom";
 import { Component } from "react";
 // imports for components
 import NavbarLoggedIn from "./components/navbar-loggedin.component";
@@ -9,11 +9,12 @@ import Login from "./components/login.component";
 import Game from "./components/game.component";
 import UserDetails from "./components/user-details.component";
 import Error404 from "./components/error-404.component";
+import Footer from "./components/footer.component";
 export default class App extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isLoggedIn: true, // maintains whether or not user is logged in
+            isLoggedIn: false, // maintains whether or not user is logged in
             id: "",
         };
         this.handleLoginClick = this.handleLoginClick.bind(this);
@@ -31,6 +32,7 @@ export default class App extends Component {
     }
 
     render() {
+        let timesOpened = 0; // maintains the number of times game page is opened
         const isLoggedIn = this.state.isLoggedIn;
 
         if (isLoggedIn) {
@@ -41,9 +43,12 @@ export default class App extends Component {
                         id={this.state.id}
                         logoutFunction={this.handleLogoutClick}
                     />
+                    <Route exact path={["/", "/login"]}>
+                        <Redirect to="/dashboard" />
+                    </Route>
                     <Route
                         exact
-                        path={["/", "/login"]}
+                        path="/dashboard"
                         render={(props) => (
                             <Dashboard {...props} id={this.state.id} />
                         )}
@@ -52,10 +57,15 @@ export default class App extends Component {
                         exact
                         path="/game"
                         render={(props) => (
-                            <Game {...props} id={this.state.id} />
+                            <Game
+                                {...props}
+                                id={this.state.id}
+                                timesOpened={timesOpened++}
+                            />
                         )}
                     />
                     <Route exact path="/edit/:id" component={UserDetails} />
+                    <Footer />
                 </Router>
             );
         } else {
@@ -63,9 +73,12 @@ export default class App extends Component {
             return (
                 <Router>
                     <NavbarLoggedOut />
+                    <Route exact path="/">
+                        <Redirect to="/login" />
+                    </Route>
                     <Route
                         exact
-                        path={["/login", "/"]}
+                        path="/login"
                         render={(props) => (
                             <Login
                                 {...props}
@@ -73,8 +86,11 @@ export default class App extends Component {
                             />
                         )}
                     />
-                    <Route exact path="/game" component={Error404} />
-                    <Route exact path="/edit/:id" component={Error404} />
+                    <Route />
+                    <Route exact path={["/game", "/edit/:id", "/dashboard"]}>
+                        <Redirect to="/error" />
+                    </Route>
+                    <Route exact path="/error" component={Error404} />
                 </Router>
             );
         }

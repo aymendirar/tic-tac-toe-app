@@ -28,7 +28,11 @@ export default class Dashboard extends Component {
                         </div>
                     </div>
                 </Link>
-                <Link to={"/edit/" + this.props.id}>
+                <Link
+                    to={
+                        "/edit/" + this.props.id // passed in id used here
+                    }
+                >
                     <div className="my-12 mx-4 max-w-sm rounded overflow-hidden shadow-lg card">
                         <img
                             className="w-auto h-auto"
@@ -40,7 +44,7 @@ export default class Dashboard extends Component {
                                 Check Out Your Record!
                             </div>
                             <p className="text-center text-gray-700 text-base">
-                                Look over your player stats and marvel your
+                                Look over your player stats and marvel at your
                                 greatness! Show off your high win record and
                                 post it to social media to rub it in everyone's
                                 face ( ͡° ͜ʖ ͡°)
