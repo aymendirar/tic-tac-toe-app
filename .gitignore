@@ -1,5 +1,6 @@
 node_modules/
-backend/.env
+/backend/.env
+/frontend/src/tailwind.output.css
 
 # from CRA .gitignore
 .pnp
