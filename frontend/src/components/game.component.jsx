@@ -6,7 +6,7 @@ import axios from "axios";
  */
 
 function Square(props) {
-    // squares are functional components that are controlled components
+    // squares are functional components
     return (
         <button className="square" onClick={props.onClick}>
             {
@@ -20,7 +20,7 @@ class Board extends React.Component {
     renderSquare(i) {
         return (
             <Square
-                value={this.props.squares[i]} // Board gets the board array in its props and tells Square to display the letter in the board at all positions
+                value={this.props.squares[i]} // Board gets the squares array in its props and tells Square to display the letter in the board at all positions
                 onClick={() => this.props.onClick(i)}
             />
         );
@@ -62,6 +62,7 @@ export default class Game extends Component {
 
         // function bindings
         this.handlePlayerClick = this.handlePlayerClick.bind(this);
+        this.startNewGame = this.startNewGame.bind(this);
     }
 
     handlePlayerClick(i) {
@@ -71,8 +72,8 @@ export default class Game extends Component {
          * This causes Game state to get updated
          * The board array is passed into board which is passed into all renderings of Square to update the client's board
          */
-        // put the slice of the state board in a variable
-        // send a patch request to api to put board an X or O on the board with id
+        // this function puts the slice of the state board in a variable
+        // it then sends a patch request to the api to put board an X or O on the board with id
         /**
          * {
          *      index: i
@@ -104,10 +105,10 @@ export default class Game extends Component {
                 });
             })
             .catch((err) => console.log(err.toString()));
-        console.log("click", i); // ! can remove later
     }
 
-    componentDidMount() {
+    // starts a new game and sets squares state
+    startNewGame() {
         // start a new game in database with the passed in id
         let gameIDFromDB = "";
         let boardArrayFromDB = [];
@@ -139,37 +140,16 @@ export default class Game extends Component {
             .catch((err) => console.log(err.toString()));
     }
 
-    // if the player plays another game
-    componentDidUpdate(prevProps, prevState) {
-        if (this.props.timesOpened !== prevProps.timesOpened) {
-            // start a new game in database with the passed in id
-            let gameIDFromDB = "";
-            let boardArrayFromDB = [];
-            axios
-                .post("http://localhost:5000/games/start/" + this.props.id)
-                .then((res) => {
-                    gameIDFromDB = res.data;
-                    this.setState({
-                        gameID: gameIDFromDB,
-                    });
-                })
-                .catch((err) => {
-                    console.log(err.toString());
-                });
+    // called upon intial render
+    componentDidMount() {
+        this.startNewGame();
+    }
 
-            // get the empty board and set that as the state
-            axios
-                .get(
-                    "http://localhost:5000/games/get-board/5f225cddb5b2968c1eb8861b"
-                )
-                .then((res) => {
-                    boardArrayFromDB = res.data;
-                    console.log(boardArrayFromDB);
-                    this.setState({
-                        squares: boardArrayFromDB.slice(),
-                    });
-                })
-                .catch((err) => console.log(err.toString()));
+    // called upon revisit to page
+    componentDidUpdate(prevProps) {
+        if (this.props.gameOpenCount !== prevProps.gameOpenCount) {
+            // if the player plays another game
+            this.startNewGame();
         }
     }
 

@@ -38,7 +38,7 @@ router.route("/check").post((req, res) => {
         // find user in DB that matches document
         username: username,
         password: password,
-    }) //! not finding user
+    })
         .then((user) =>
             res.json(
                 user // res.data will be null if not found, will contain object if found
@@ -95,7 +95,5 @@ router.route("/delete/:id").delete((req, res) => {
         })
         .catch((err) => res.status(400).json("Error " + err));
 });
-
-//TODO: continue testing api
 
 module.exports = router;

@@ -10,6 +10,7 @@ import Game from "./components/game.component";
 import UserDetails from "./components/user-details.component";
 import Error404 from "./components/error-404.component";
 import Footer from "./components/footer.component";
+
 export default class App extends Component {
     constructor(props) {
         super(props);
@@ -32,7 +33,8 @@ export default class App extends Component {
     }
 
     render() {
-        let timesOpened = 0; // maintains the number of times game page is opened
+        let gameOpenCount = 0; // maintains the number of times game page is opened
+        let userDetailOpenCount = 0; // maintains the number of times the user detail is opened
         const isLoggedIn = this.state.isLoggedIn;
 
         if (isLoggedIn) {
@@ -60,11 +62,20 @@ export default class App extends Component {
                             <Game
                                 {...props}
                                 id={this.state.id}
-                                timesOpened={timesOpened++}
+                                gameOpenCount={gameOpenCount++}
                             />
                         )}
                     />
-                    <Route exact path="/edit/:id" component={UserDetails} />
+                    <Route
+                        exact
+                        path="/edit/:id"
+                        render={(props) => (
+                            <UserDetails
+                                {...props}
+                                userDetailOpenCount={userDetailOpenCount++}
+                            />
+                        )}
+                    />
                     <Footer />
                 </Router>
             );

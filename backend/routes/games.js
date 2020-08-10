@@ -80,7 +80,6 @@ router.route("/start/:userid").post((req, res) => {
 // update game board and check if someone won
 router.route("/update/:gameid").patch((req, res) => {
     // find the specific game associated with the gameid
-    //! think about handling updates when the game is full/ when the spot is taken
     Game.findOne({
         _id: req.params.gameid,
     })
