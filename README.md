@@ -4,7 +4,7 @@ A tic-tac-toe web application built using the MERN stack (MongoDB, Express, Reac
 
 ## The MERN Stack:
 
-MongoDB Atlas is used as the cloud database service to store user data and tic-tac-toe game data. Express is used the server framework for Node.js, a JavaScript runtime environment for servers and applications. React is used as the frontend framwork for the application.
+MongoDB Atlas is used as the cloud database service to store user data and tic-tac-toe game data. Express is used as the server framework for Node.js, a JavaScript runtime environment for servers and applications. React is used as the frontend framwork for the application.
 
 ## Project Details:
 
@@ -14,7 +14,7 @@ When ran, users are redirected to a login page where they can either log in or r
 
 There are package.json files in both the frontend and backend folder. Install the relevant dependencies by running: `npm install` in both directories.
 
-Create a .env file in the backend directory with an ATLAS_URI variable with the appropriate MongoDB Atlas connection string.
+Create a .env file in the backend directory with an `ATLAS_URI` variable with the appropriate MongoDB Atlas connection string.
 
 Open the frontend directory in a terminal and run `npm start`. Also open the backend directory and run `nodemon server`. After this setup, you should be able to use the application's full functionality.
 
